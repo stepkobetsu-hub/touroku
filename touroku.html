@@ -262,8 +262,8 @@
   .confirm-table { width: 100%; border-collapse: collapse; font-size: 14px; }
   .confirm-table tr { border-bottom: 1px solid #EBF7FC; }
   .confirm-table td { padding: 9px 4px; vertical-align: top; }
-  .confirm-table td:first-child { color: var(--muted); font-size: 12px; width: 110px; padding-right: 12px; white-space: nowrap; }
-  .confirm-table td:last-child { font-weight: 500; }
+  .confirm-table td:first-child { color: var(--muted); font-size: 12px; width: 90px; padding-right: 8px; white-space: nowrap; }
+  .confirm-table td:last-child { font-weight: 500; word-break: break-all; overflow-wrap: anywhere; }
 
   /* ===== NOTE ===== */
   .note { background: var(--sky-light); border-left: 3px solid var(--sky); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 12px; color: var(--sky-dark); margin-bottom: 18px; line-height: 1.7; }
@@ -280,6 +280,9 @@
   @keyframes pop { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
   .success-page h2 { font-size: 22px; color: var(--sky-dark); margin-bottom: 12px; }
   .success-page p { color: var(--muted); font-size: 14px; line-height: 1.9; }
+  .success-btns { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; max-width: 300px; margin-left: auto; margin-right: auto; }
+  .btn-again { padding: 14px; background: linear-gradient(135deg, var(--sky), var(--sky-dark)); border: none; border-radius: 10px; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; box-shadow: 0 4px 14px rgba(43,168,216,0.35); }
+  .btn-top { padding: 14px; background: #fff; border: 2px solid var(--border); border-radius: 10px; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; }
 
   @media(max-width:400px){
     .header h1{font-size:18px}
@@ -520,6 +523,10 @@
   <span class="success-icon">✅</span>
   <h2>登録完了しました。</h2>
   <p>ご登録ありがとうございます。<br>個別指導ステップ</p>
+  <div class="success-btns">
+    <button class="btn-again" onclick="location.reload()">もう一人登録する</button>
+    <button class="btn-top" onclick="location.href=location.href">トップページに戻る</button>
+  </div>
 </div>
 
 <script>
