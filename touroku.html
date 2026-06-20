@@ -26,6 +26,7 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  ::placeholder { color: #B0C8D8 !important; opacity: 1; }
   body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
   /* ===== HEADER ===== */
@@ -340,8 +341,8 @@
     <div class="field">
       <label>性別<span class="req">必須</span></label>
       <div class="radio-group">
-        <div class="radio-btn"><input type="radio" name="gender" id="gender-m" value="男"><label for="gender-m">♂ 男性</label></div>
-        <div class="radio-btn"><input type="radio" name="gender" id="gender-f" value="女"><label for="gender-f">♀ 女性</label></div>
+        <div class="radio-btn"><input type="radio" name="gender" id="gender-m" value="男"><label for="gender-m">男性</label></div>
+        <div class="radio-btn"><input type="radio" name="gender" id="gender-f" value="女"><label for="gender-f">女性</label></div>
       </div>
       <div class="err-msg" id="err-gender">性別を選択してください</div>
     </div>
@@ -392,6 +393,9 @@
       <div class="school-selected" id="schoolSelected">
         <span>✓ <span id="schoolSelectedText"></span></span>
         <button onclick="clearSchool()" type="button">✕</button>
+      </div>
+      <div id="schoolOtherWrap" style="display:none;margin-top:8px;">
+        <input type="text" id="schoolOther" placeholder="学校名を入力してください" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'Noto Sans JP',sans-serif;background:#F8FCFF;" oninput="onSchoolOtherInput()">
       </div>
       <div class="err-msg" id="err-school">在学学校を選択してください</div>
     </div>
@@ -513,9 +517,9 @@
 
 <!-- SUCCESS -->
 <div class="success-page" id="successPage">
-  <span class="success-icon">🎉</span>
-  <h2>登録完了しました！</h2>
-  <p>ご登録ありがとうございます。<br>スタッフより改めてご連絡いたします。<br><br>引き続きよろしくお願いいたします。</p>
+  <span class="success-icon">✅</span>
+  <h2>登録完了しました。</h2>
+  <p>ご登録ありがとうございます。<br>個別指導ステップ</p>
 </div>
 
 <script>
@@ -555,13 +559,26 @@ function renderSchoolOptions(q) {
 }
 function selectSchool(name) {
   selectedSchool = name;
-  document.getElementById('school').value = name;
   document.getElementById('schoolInput').value = '';
   document.getElementById('schoolInput').style.display = 'none';
   document.getElementById('schoolDropdown').classList.remove('open');
   document.getElementById('schoolSelectedText').textContent = name;
   document.getElementById('schoolSelected').classList.add('show');
   clearErr('school');
+  if (name === 'その他') {
+    document.getElementById('school').value = '';
+    document.getElementById('schoolOtherWrap').style.display = 'block';
+    document.getElementById('schoolOther').focus();
+  } else {
+    document.getElementById('school').value = name;
+    document.getElementById('schoolOtherWrap').style.display = 'none';
+    document.getElementById('schoolOther').value = '';
+  }
+}
+function onSchoolOtherInput() {
+  const v = document.getElementById('schoolOther').value.trim();
+  document.getElementById('school').value = v;
+  if (v) clearErr('school');
 }
 function clearSchool() {
   selectedSchool = '';
@@ -569,6 +586,8 @@ function clearSchool() {
   document.getElementById('schoolInput').value = '';
   document.getElementById('schoolInput').style.display = '';
   document.getElementById('schoolSelected').classList.remove('show');
+  document.getElementById('schoolOtherWrap').style.display = 'none';
+  document.getElementById('schoolOther').value = '';
 }
 document.addEventListener('click', e => {
   if (!document.getElementById('school-wrap').contains(e.target))
