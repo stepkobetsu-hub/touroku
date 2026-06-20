@@ -384,21 +384,32 @@
     </div>
 
     <div class="field">
-      <label>在学学校<span class="req">必須</span><span class="hint">名前を入力して絞り込めます</span></label>
-      <div class="school-search-wrap" id="school-wrap">
-        <span class="school-search-icon">🔍</span>
-        <input type="text" class="school-search-input" id="schoolInput"
-          placeholder="学校名を入力…（例：南城、神領）"
-          autocomplete="off" oninput="filterSchools()" onfocus="openSchoolDropdown()">
-        <div class="school-dropdown" id="schoolDropdown"></div>
+      <label>在学学校<span class="req">必須</span></label>
+      <div class="drum-picker" style="height:46px;">
+        <select id="schoolSelect" onchange="onSchoolSelect()">
+          <option value="">選択してください</option>
+          <optgroup label="小学校">
+            <option>神領小</option><option>北城小</option><option>下志段味小</option>
+            <option>上志段味小</option><option>志段味東小</option><option>出川小</option>
+            <option>大城小</option><option>不二小</option><option>篠木小</option>
+            <option>鷹来小</option><option>岩成台小</option><option>本庄小</option>
+            <option>西山小</option><option>松原小</option><option>丸田小</option>
+            <option>大手小</option><option>牛山小</option><option>春日井小</option>
+          </optgroup>
+          <optgroup label="中学校">
+            <option>南城中</option><option>高蔵寺中</option><option>志段味中</option>
+            <option>吉根中</option><option>坂下中</option><option>石尾台中</option>
+            <option>東部中</option><option>鷹来中</option><option>西部中</option>
+          </optgroup>
+          <option value="その他">その他（自由入力）</option>
+        </select>
+        <div class="drum-display placeholder" id="disp-school">タップして選択</div>
       </div>
       <input type="hidden" id="school" value="">
-      <div class="school-selected" id="schoolSelected">
-        <span>✓ <span id="schoolSelectedText"></span></span>
-        <button onclick="clearSchool()" type="button">✕</button>
-      </div>
       <div id="schoolOtherWrap" style="display:none;margin-top:8px;">
-        <input type="text" id="schoolOther" placeholder="学校名を入力してください" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'Noto Sans JP',sans-serif;background:#F8FCFF;" oninput="onSchoolOtherInput()">
+        <input type="text" id="schoolOther" placeholder="学校名を入力してください"
+          style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'Noto Sans JP',sans-serif;background:#F8FCFF;"
+          oninput="onSchoolOtherInput()">
       </div>
       <div class="err-msg" id="err-school">在学学校を選択してください</div>
     </div>
@@ -530,56 +541,29 @@
 </div>
 
 <script>
-// ===== SCHOOLS =====
-const SCHOOLS = [
-  {name:'神領小',type:'elem'},{name:'北城小',type:'elem'},{name:'下志段味小',type:'elem'},
-  {name:'上志段味小',type:'elem'},{name:'志段味東小',type:'elem'},{name:'出川小',type:'elem'},
-  {name:'大城小',type:'elem'},{name:'不二小',type:'elem'},{name:'篠木小',type:'elem'},
-  {name:'鷹来小',type:'elem'},{name:'岩成台小',type:'elem'},{name:'本庄小',type:'elem'},
-  {name:'西山小',type:'elem'},{name:'松原小',type:'elem'},{name:'丸田小',type:'elem'},
-  {name:'大手小',type:'elem'},{name:'牛山小',type:'elem'},{name:'春日井小',type:'elem'},
-  {name:'南城中',type:'mid'},{name:'高蔵寺中',type:'mid'},{name:'志段味中',type:'mid'},
-  {name:'吉根中',type:'mid'},{name:'坂下中',type:'mid'},{name:'石尾台中',type:'mid'},
-  {name:'東部中',type:'mid'},{name:'鷹来中',type:'mid'},{name:'西部中',type:'mid'},
-  {name:'その他',type:'other'}
-];
-const BADGE = {elem:['小学校','badge-elem'],mid:['中学校','badge-mid'],high:['高校','badge-high'],other:['その他','badge-other']};
-
-let selectedSchool = '';
-
-function filterSchools() {
-  renderSchoolOptions(document.getElementById('schoolInput').value.trim());
-  document.getElementById('schoolDropdown').classList.add('open');
-}
-function openSchoolDropdown() {
-  renderSchoolOptions(document.getElementById('schoolInput').value.trim());
-  document.getElementById('schoolDropdown').classList.add('open');
-}
-function renderSchoolOptions(q) {
-  const dd = document.getElementById('schoolDropdown');
-  const list = q ? SCHOOLS.filter(s=>s.name.includes(q)) : SCHOOLS;
-  if (!list.length) { dd.innerHTML='<div class="school-no-result">見つかりません。「その他」を選んで備考に記入してください。</div>'; return; }
-  dd.innerHTML = list.map(s=>{
-    const [lbl,cls] = BADGE[s.type]||['',''];
-    return `<div class="school-option" onclick="selectSchool('${s.name}')"><span class="badge ${cls}">${lbl}</span>${s.name}</div>`;
-  }).join('');
-}
-function selectSchool(name) {
-  selectedSchool = name;
-  document.getElementById('schoolInput').value = '';
-  document.getElementById('schoolInput').style.display = 'none';
-  document.getElementById('schoolDropdown').classList.remove('open');
-  document.getElementById('schoolSelectedText').textContent = name;
-  document.getElementById('schoolSelected').classList.add('show');
-  clearErr('school');
-  if (name === 'その他') {
+// ===== SCHOOL SELECT =====
+function onSchoolSelect() {
+  const sel = document.getElementById('schoolSelect');
+  const val = sel.value;
+  const disp = document.getElementById('disp-school');
+  if (!val) {
+    disp.className = 'drum-display placeholder';
+    disp.textContent = 'タップして選択';
+    document.getElementById('school').value = '';
+    document.getElementById('schoolOtherWrap').style.display = 'none';
+  } else if (val === 'その他') {
+    disp.className = 'drum-display';
+    disp.textContent = 'その他';
     document.getElementById('school').value = '';
     document.getElementById('schoolOtherWrap').style.display = 'block';
     document.getElementById('schoolOther').focus();
   } else {
-    document.getElementById('school').value = name;
+    disp.className = 'drum-display';
+    disp.textContent = val;
+    document.getElementById('school').value = val;
     document.getElementById('schoolOtherWrap').style.display = 'none';
     document.getElementById('schoolOther').value = '';
+    clearErr('school');
   }
 }
 function onSchoolOtherInput() {
@@ -587,19 +571,6 @@ function onSchoolOtherInput() {
   document.getElementById('school').value = v;
   if (v) clearErr('school');
 }
-function clearSchool() {
-  selectedSchool = '';
-  document.getElementById('school').value = '';
-  document.getElementById('schoolInput').value = '';
-  document.getElementById('schoolInput').style.display = '';
-  document.getElementById('schoolSelected').classList.remove('show');
-  document.getElementById('schoolOtherWrap').style.display = 'none';
-  document.getElementById('schoolOther').value = '';
-}
-document.addEventListener('click', e => {
-  if (!document.getElementById('school-wrap').contains(e.target))
-    document.getElementById('schoolDropdown').classList.remove('open');
-});
 
 // ===== DATE PICKER =====
 (function() {
