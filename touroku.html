@@ -577,10 +577,20 @@ function onSchoolOtherInput() {
   const ySel = document.getElementById('sel-year');
   const mSel = document.getElementById('sel-month');
   const cur = new Date().getFullYear();
-  // 今年から20年前まで（子どもの年齢範囲）
+  // 和暦変換関数
+  function toWareki(y) {
+    if (y >= 2019) return '令和' + (y - 2018) + '年';
+    if (y >= 1989) return '平成' + (y - 1988) + '年';
+    if (y >= 1926) return '昭和' + (y - 1925) + '年';
+    return '';
+  }
+  // 今年から22年前まで（子どもの年齢範囲）
   for (let y = cur - 3; y >= cur - 22; y--) {
     const o = document.createElement('option');
-    o.value = y; o.textContent = y + '年'; ySel.appendChild(o);
+    const wareki = toWareki(y);
+    o.value = y;
+    o.textContent = y + '年（' + wareki + '）';
+    ySel.appendChild(o);
   }
   for (let m = 1; m <= 12; m++) {
     const o = document.createElement('option');
@@ -589,14 +599,26 @@ function onSchoolOtherInput() {
   updateDays();
 })();
 
+function toWareki(y) {
+  if (y >= 2019) return '令和' + (y - 2018) + '年';
+  if (y >= 1989) return '平成' + (y - 1988) + '年';
+  if (y >= 1926) return '昭和' + (y - 1925) + '年';
+  return '';
+}
 function updateDrum(type) {
   const sel = document.getElementById('sel-' + type);
   const disp = document.getElementById('disp-' + type);
   const val = sel.value;
   const placeholders = {year:'年を選ぶ', month:'月', day:'日'};
-  const units = {year:'年', month:'月', day:'日'};
   if (!val) { disp.className='drum-display placeholder'; disp.textContent=placeholders[type]; }
-  else { disp.className='drum-display'; disp.innerHTML=val+'<span class="unit">'+units[type]+'</span>'; }
+  else if (type==='year') {
+    const wareki = toWareki(parseInt(val));
+    disp.className='drum-display';
+    disp.innerHTML=val+'<span class="unit">年</span> <span style="font-size:11px;color:var(--muted);">'+wareki+'</span>';
+  } else {
+    const units = {month:'月', day:'日'};
+    disp.className='drum-display'; disp.innerHTML=val+'<span class="unit">'+units[type]+'</span>';
+  }
   if (type==='year'||type==='month') updateDays();
 }
 function updateDays() {
