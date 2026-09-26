@@ -125,7 +125,8 @@ function parseLocalDate_(value) {
 
 function buildGradeFormula_(row) {
   const birth = 'I' + row;
-  const schoolYearDate = 'DATE(YEAR(TODAY())-IF(TODAY()<DATE(YEAR(TODAY()),4,1),1,0),4,2)';
+  // 日本の学年区分は4月1日生まれまでが同学年。4月2日生まれを1学年上にしないため4月1日時点の年齢を使う。
+  const schoolYearDate = 'DATE(YEAR(TODAY())-IF(TODAY()<DATE(YEAR(TODAY()),4,1),1,0),4,1)';
   const age = 'DATEDIF(' + birth + ',' + schoolYearDate + ',"Y")';
   const grades = ['未就学', '小１', '小２', '小３', '小４', '小５', '小６',
     '中１', '中２', '中３', '高１', '高２', '高３', '大１', '大２', '大３', '大４'];
