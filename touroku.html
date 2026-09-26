@@ -330,6 +330,19 @@
     <div class="section-title"><span class="icon">👦</span>生徒情報</div>
 
     <div class="field">
+      <label>通塾教室<span class="req">必須</span></label>
+      <div class="select-wrap">
+        <select id="campus">
+          <option value="">選択してください</option>
+          <option>神領</option>
+          <option>大手</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div class="err-msg" id="err-campus">通塾教室を選択してください</div>
+    </div>
+
+    <div class="field">
       <label>生徒氏名<span class="req">必須</span><span class="hint">姓名の間にスペース不要</span></label>
       <input type="text" id="studentName" placeholder="例：田中太郎">
       <div class="err-msg" id="err-studentName">氏名を入力してください</div>
@@ -739,6 +752,8 @@ function clearErr(id) { setErr(id,false); }
 function validateStep(step) {
   let ok=true;
   if(step===1){
+    const campus=document.getElementById('campus').value;
+    setErr('campus',!campus); if(!campus) ok=false;
     const sn=document.getElementById('studentName').value.trim();
     setErr('studentName',!sn); if(!sn) ok=false;
     const sk=document.getElementById('studentKana').value.trim();
@@ -773,6 +788,7 @@ function buildConfirm() {
   const g = document.querySelector('input[name="gender"]:checked');
   const groups = [
     {title:'👦 生徒情報', items:[
+      ['通塾教室', document.getElementById('campus').value],
       ['氏名', document.getElementById('studentName').value],
       ['フリガナ', document.getElementById('studentKana').value],
       ['性別', g?g.value:''],
@@ -810,6 +826,7 @@ function submitForm() {
 
   const g = document.querySelector('input[name="gender"]:checked');
   const data = {
+    campus: document.getElementById('campus').value,
     studentName: document.getElementById('studentName').value.trim(),
     studentKana: document.getElementById('studentKana').value.trim(),
     gender: g?g.value:'',
