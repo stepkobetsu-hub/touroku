@@ -112,6 +112,14 @@
   .field label { display: block; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
   .field label .req { color: var(--accent); margin-left: 4px; font-size: 11px; }
   .field label .hint { font-weight: 400; color: var(--muted); font-size: 11px; margin-left: 6px; }
+  .boxed-label {
+    display: inline-block;
+    border: 1.5px solid var(--navy);
+    border-radius: 5px;
+    padding: 2px 7px;
+    line-height: 1.4;
+    background: #fff;
+  }
 
   .field input[type="text"],
   .field input[type="email"],
@@ -330,7 +338,7 @@
     <div class="section-title"><span class="icon">👦</span>生徒情報</div>
 
     <div class="field">
-      <label>通塾教室<span class="req">必須</span></label>
+      <label><span class="boxed-label">通塾教室</span><span class="req">必須</span></label>
       <div class="select-wrap">
         <select id="campus">
           <option value="">選択してください</option>
