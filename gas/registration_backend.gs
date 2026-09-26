@@ -111,7 +111,8 @@ function getMaxNumericValue_(sheet, column) {
 }
 
 function parseLocalDate_(value) {
-  const match = String(value).match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  // フォーム側は yyyy/mm/dd を送る。互換のため yyyy-mm-dd も受け付ける。
+  const match = String(value).match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
   if (!match) throw new Error('生年月日の形式が不正です。');
   const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
   if (date.getFullYear() !== Number(match[1]) ||
