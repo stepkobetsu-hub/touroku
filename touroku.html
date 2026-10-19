@@ -351,15 +351,27 @@
     </div>
 
     <div class="field">
-      <label>生徒氏名<span class="req">必須</span><span class="hint">姓名の間にスペース不要</span></label>
-      <input type="text" id="studentName" placeholder="例：田中太郎">
-      <div class="err-msg" id="err-studentName">氏名を入力してください</div>
+      <label for="studentLastName">生徒（姓）<span class="req">必須</span></label>
+      <input type="text" id="studentLastName" placeholder="例：田中" required>
+      <div class="err-msg" id="err-studentLastName">姓を入力してください</div>
     </div>
 
     <div class="field">
-      <label>フリガナ<span class="req">必須</span></label>
-      <input type="text" id="studentKana" placeholder="例：タナカタロウ">
-      <div class="err-msg" id="err-studentKana">フリガナを入力してください</div>
+      <label for="studentFirstName">生徒（名）<span class="req">必須</span></label>
+      <input type="text" id="studentFirstName" placeholder="例：太郎" required>
+      <div class="err-msg" id="err-studentFirstName">名を入力してください</div>
+    </div>
+
+    <div class="field">
+      <label for="studentLastKana">フリガナ（姓）<span class="req">必須</span></label>
+      <input type="text" id="studentLastKana" placeholder="例：タナカ" required>
+      <div class="err-msg" id="err-studentLastKana">フリガナ（姓）を入力してください</div>
+    </div>
+
+    <div class="field">
+      <label for="studentFirstKana">フリガナ（名）<span class="req">必須</span></label>
+      <input type="text" id="studentFirstKana" placeholder="例：タロウ" required>
+      <div class="err-msg" id="err-studentFirstKana">フリガナ（名）を入力してください</div>
     </div>
 
     <div class="field">
@@ -762,10 +774,10 @@ function validateStep(step) {
   if(step===1){
     const campus=document.getElementById('campus').value;
     setErr('campus',!campus); if(!campus) ok=false;
-    const sn=document.getElementById('studentName').value.trim();
-    setErr('studentName',!sn); if(!sn) ok=false;
-    const sk=document.getElementById('studentKana').value.trim();
-    setErr('studentKana',!sk); if(!sk) ok=false;
+    ['studentLastName', 'studentFirstName', 'studentLastKana', 'studentFirstKana'].forEach(id => {
+      const value = document.getElementById(id).value.trim();
+      setErr(id, !value); if (!value) ok = false;
+    });
     const g=document.querySelector('input[name="gender"]:checked');
     document.getElementById('err-gender').classList.toggle('show',!g); if(!g) ok=false;
     const bd=getBirthdate(); setErr('birthdate',!bd); if(!bd) ok=false;
@@ -791,14 +803,24 @@ function validateStep(step) {
   return ok;
 }
 
+// 姓・名は入力欄の前後の空白を除き、既存の保存項目へ半角スペース1つで結合する。
+function getStudentNames() {
+  const value = id => document.getElementById(id).value.trim();
+  return {
+    studentName: value('studentLastName') + ' ' + value('studentFirstName'),
+    studentKana: value('studentLastKana') + ' ' + value('studentFirstKana')
+  };
+}
+
 // ===== CONFIRM =====
 function buildConfirm() {
+  const names = getStudentNames();
   const g = document.querySelector('input[name="gender"]:checked');
   const groups = [
     {title:'👦 生徒情報', items:[
       ['通塾教室', document.getElementById('campus').value],
-      ['氏名', document.getElementById('studentName').value],
-      ['フリガナ', document.getElementById('studentKana').value],
+      ['氏名', names.studentName],
+      ['フリガナ', names.studentKana],
       ['性別', g?g.value:''],
       ['生年月日', getBirthdate()],
       ['学年', document.getElementById('grade').value],
@@ -833,10 +855,11 @@ function submitForm() {
   btn.disabled = true; loading.style.display = 'block';
 
   const g = document.querySelector('input[name="gender"]:checked');
+  const names = getStudentNames();
   const data = {
     campus: document.getElementById('campus').value,
-    studentName: document.getElementById('studentName').value.trim(),
-    studentKana: document.getElementById('studentKana').value.trim(),
+    studentName: names.studentName,
+    studentKana: names.studentKana,
     gender: g?g.value:'',
     birthdate: getBirthdate(),
     grade: document.getElementById('grade').value,
